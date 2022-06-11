@@ -1,0 +1,267 @@
+
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <title>H130 EnHT</title>
+  <link rel="SHORTCUT ICON" href="https://www.freefavicon.com/freefavicons/icons/source-code-icon-152-213242.png">
+  <meta name="description" content="Encrypt HTML using simple javascipt functions">
+  <meta name="keywords" content="ISDN*tek, HTML encryption, HTML decryption">
+<style type="text/css">
+button {
+ padding: 0.8em 1.8em;
+ border: 2px solid #3AFF00;
+ position: relative;
+ overflow: hidden;
+ background-color: transparent;
+ text-align: center;
+ text-transform: uppercase;
+ font-size: 16px;
+ transition: .3s;
+ z-index: 1;
+ font-family: inherit;
+ color: #3AFF00;
+}
+
+button::before {
+ content: '';
+ width: 0;
+ height: 300%;
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ transform: translate(-50%, -50%) rotate(45deg);
+ background: #3AFF00;
+ transition: .5s ease;
+ display: block;
+ z-index: -1;
+}
+
+button:hover::before {
+ width: 105%;
+}
+
+button:hover {
+ color: #111;
+}
+span,div{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Lato', sans-serif;
+}
+
+.wrapper{
+  display: inline-flex;
+  background: #black;
+  height: 100px;
+  width: 400px;
+  align-items: center;
+  justify-content: space-evenly;
+  border-radius: 5px;
+  padding: 20px 15px;
+  box-shadow: 5px 5px 30px rgba(0,0,0,0.2);
+}
+	.wrapper .option{
+  background: #fff;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 0 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 0 10px;
+  border: 2px solid #fff;
+  transition: all 0.3s ease;
+}
+.wrapper .option .dot{
+  height: 20px;
+  width: 20px;
+  background: #d9d9d9;
+  border-radius: 50%;
+  position: relative;
+}
+.wrapper .option .dot::before{
+  position: absolute;
+  content: "";
+  top: 4px;
+  left: 4px;
+  width: 12px;
+  height: 12px;
+  background: #3AFF00;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(1.5);
+  transition: all 0.3s ease;
+}
+input[type="radio"]{
+  display: none;
+}
+#option-1:checked:checked ~ .option-1,
+#option-2:checked:checked ~ .option-2{
+  border-color: #3AFF00;
+  background: #3AFF00;
+}
+#option-1:checked:checked ~ .option-1 .dot,
+#option-2:checked:checked ~ .option-2 .dot{
+  background: #fff;
+}
+#option-1:checked:checked ~ .option-1 .dot::before,
+#option-2:checked:checked ~ .option-2 .dot::before{
+  opacity: 1;
+  transform: scale(1);
+}
+.wrapper .option span{
+  font-size: 20px;
+  color: #808080;
+}
+#option-1:checked:checked ~ .option-1 span,
+#option-2:checked:checked ~ .option-2 span{
+  color: #fff;
+}
+</style>
+<script language="javascript">
+var quot="'"
+var fullenc=false
+
+function Encrypt() {
+ 	if (fullenc) {EncryptAll()} else {EncryptBasic()}
+}
+
+function EncryptBasic(){
+	var NewCode=escape(document.getElementById('InputArea').value)
+	NewCode='<'+'script language=javascript>document.write(unescape('+quot
+		+ NewCode+quot+ '))<'+'/script>\n'
+	document.getElementById('OutputArea').value = NewCode
+	FileSizes()
+}
+
+function EncryptAll() {NewCode=""
+	var OldCode=document.getElementById('InputArea').value
+	for (var i=0; i<OldCode.length; i++){NewCode=NewCode+Hex(OldCode.charCodeAt(i))}
+	NewCode='<'+'script language=javascript>document.write(unescape('+quot
+		+ NewCode+quot+ '))<'+'/script>\n'    	
+	document.getElementById('OutputArea').value = NewCode
+	FileSizes()
+
+}
+
+function Decrypt() {
+	var NewCode=unescape(document.getElementById('InputArea').value)
+	NewCode=NewCode.replace("<script language=javascript>document.write(unescape('","")
+	NewCode=NewCode.replace("'))<"+"/script>","")
+	document.getElementById('OutputArea').value = NewCode
+	FileSizes()
+}
+
+function Hex(dec){
+	var hexbase="0123456789ABCDEF"
+	hx_hi=dec/16; hx_lo=dec%16;
+        hx=hexbase.substr(hx_hi,1)+hexbase.substr(hx_lo,1)
+	hexval='%'+hx
+	return hexval;
+}
+
+function FileSizes() {
+	document.getElementById('topSize').innerHTML= 
+	document.getElementById('InputArea').value.length
+	document.getElementById('bottomSize').innerHTML= 
+	document.getElementById('OutputArea').value.length
+
+}
+
+function Preview(selection) {
+	FileSizes()
+	var newpage=""
+	if (selection==0) {newpage=document.getElementById('InputArea').value
+  	  var w0 = window.open("","popup0","width=600,height=350,directories=no,menubar=yes,status=yes,toolbar=yes,resizable=yes,scrollbars=yes,screenY=0,top=0,screenX=80,left=80" );
+    	  w0.document.writeln("<html><title>Top Window Preview</title><body>" );
+  	  w0.document.writeln(newpage);
+  	  w0.document.writeln("<hr><form><center><input type=\"submit\" value=\"Close Window\" onClick=\"window.close();return false; \"></center></form>" );
+  	  w0.document.writeln("</body></html>" );
+  	  w0.document.close() ;
+  	  w0.document.focus(true)
+	}
+	else {selection=1; newpage=document.getElementById('OutputArea').value
+  	  var w1 = window.open("","popup1","width=600,height=350,directories=no,menubar=yes,status=yes,toolbar=yes,resizable=yes,scrollbars=yes,screenY=0,top=0,screenX=80,left=80" );
+  	  w1.document.writeln("<html><title>Bottom Window Preview</title><body>" );
+  	  w1.document.writeln(newpage);
+  	  w1.document.writeln("<hr><form><center><input type=\"submit\" value=\"Close Window\" onClick=\"window.close();return false; \"></center></form>" );
+  	  w1.document.writeln("</body></html>" );
+  	  w1.document.close() ;
+  	  w1.document.focus(true)
+	}
+}
+
+-->
+</script>
+</head>
+
+<body style="font-family:arial, sans-serif" text="#000000" bgcolor="ss">
+
+
+<hr>
+
+
+   <center><h1>
+  
+
+</td></tr>
+<tr><td style="height:20">&nbsp;</td></tr>
+
+<tr>
+<td valign="top">
+<font color="#3AFF00"><b>H130 EnHT</b></font><ol>
+
+<div class="wrapper">
+ <input type="radio" name="select" id="option-1" checked>
+ <input type="radio" name="select" id="option-2">
+   <label for="option-1" class="option option-1">
+     <div class="dot"></div>
+      <span title="slightly larger file"><input type="radio" name="enctype" checked="" onclick="fullenc=false">Basic Compile</span>
+      </label>
+   <label for="option-2" class="option option-2">
+     <div class="dot"></div>
+      <span ><input type="radio" name="enctype" onclick="fullenc=true">FULL Compile</span>
+   </label>
+</div>
+<br>
+<br>
+
+
+</tr>
+
+</tbody></table>
+
+
+<center>
+<textarea id="InputArea" name="InputArea" style="width:95%; height:300; padding:5;background-color: black;color: #13FF00;" onchange="FileSizes()" onkeyup="FileSizes()" onmouseup="FileSizes()"></textarea>
+<table align="center" width="95%" cellspacing="0" cellpadding="3" border="0">
+<tbody><tr style="font-family:arial, sans serif; font-size:14px">
+<td style="color: white;" id="topSize" align="center">0</td>
+<td style="color: white;" align="center">&#8593; Original Code</td>
+<td  align="center"><button onclick="Encrypt()">Encrypt</button>
+ </td>
+<td align="center"><button onclick="Decrypt()">Decrypt</button>
+</td>
+<td style="color: white;" align="center">Compile Code &#8595;</td>
+
+<td style="color: white;" id="bottomSize" align="center">0</td>
+</tr>
+</tbody></table>
+
+<textarea id="OutputArea" name="OutputArea" style="width:95%; height:300; padding:5;background-color: black;color: #13FF00;" onchange="FileSizes()" onkeyup="FileSizes()" onmouseup="FileSizes()"></textarea>
+</center>
+
+<footer style="color: green; font-size:30px;">Copyright 2022 | H130 & Himo</footer>
+
+
+
+
+
+
+</p>
+
+
+
+
+</body></html>
